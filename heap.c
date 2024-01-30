@@ -1,8 +1,10 @@
 /*
  * heapsort.c
+ * This file contains various methods that allow it to conduct a heapsort.
+ * 
  *
  *  Created on: Jul 1, 2013
- *      Author:
+ *      Author: Tyler Higashihara
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,12 +19,20 @@
  */
 void heapSort(Employee *A, int n)
 {
-	// TODO - BuildHeap on the heap
+	// BuildHeap on the heap
+	buildHeap(A, n);
 
-	// TODO - while n > 0:
-	// TODO - swap A[n-1] with A[0], since A[0] is the smallest number.
-	// TODO - A[n-1] now sorted in place, so decrement n
-	// TODO - Heapify the elements from A[0] up to A[n-1] (which leaves the newly sorted element alone)
+	// While n > 0:
+	while (n > 0) {
+        // swap A[n-1] with A[0], since A[0] is the minimum number.
+        swap(&A[0], &A[n - 1]);
+
+        // A[n-1] is now sorted in place, so decrement n
+        n--;
+
+        // Heapify the remaining elements from A[0] up to A[n-1]
+        heapify(A, 0, n);
+    }
 }
 
 /**
@@ -35,28 +45,46 @@ void heapSort(Employee *A, int n)
  */
 void buildHeap(Employee *A, int n)
 {
-	// TODO - heapify() every element from A[n/2] down-to A[0]
+	// heapify() every element from A[n/2] down-to A[0]
+	for(int i = n/2 - 1; i >= 0; i--){
+		heapify(A, i, n);
+	}
 }
 
 /**
  * We want to start with A[i] and percolate it downward
  * if it is greater than either left or right child.
- *
+ * 
  * @param	*A	Pointer to the list of employees
  * @param	i	Index of current element to heapify
  * @param	n	Size of the heap
  */
 void heapify(Employee *A, int i, int n)
 {
-	// TODO - get index of left child of element i
-	// TODO - get index of right child of element i
+	// Get index of left child of element i
+	int lefty = 2 * i + 1;
 
-	// TODO - determine which child has a smaller salary. We'll call the index of this
+	// Get index of right child of element i
+	int righty = 2 * i + 2;
+
+	// Determine which child has a smaller salary. We'll call the index of this
 	//		element: "smaller"
+	int smaller = i;
+	if (lefty < n && A[lefty].salary < A[smaller].salary) {
+        smaller = lefty;
+    }
 
-	// TODO - recursively check if the salary at A[i] > the salary at A[smaller]. If it is, swap the two.
+    if (righty < n && A[righty].salary < A[smaller].salary) {
+        smaller = righty;
+    }
+
+	// Recursively check if the salary at A[i] > the salary at A[smaller]. If it is, swap the two.
 	//			Then recursively heapify A[smaller].
-	// TODO - Continue recursion as long as i is within range AND either right_child and left_child are still within range.
+	if (smaller != i) {
+        swap(&A[i], &A[smaller]);
+        heapify(A, smaller, n);
+    }
+	// Continue recursion as long as i is within range AND either right_child and left_child are still within range.
 }
 
 /**
@@ -66,7 +94,9 @@ void heapify(Employee *A, int i, int n)
  */
 void swap(Employee *e1, Employee *e2)
 {
-	// TODO
+	Employee tmp = *e1;
+	*e1 = *e2;
+	*e2 = tmp;
 }
 
 /**
@@ -76,5 +106,9 @@ void swap(Employee *e1, Employee *e2)
  */
 void printList(Employee *A, int n)
 {
-	// TODO
+	for(int i = 0; i < n; i++){
+		printf("[id=%s ", A[i].name);
+		printf("sal=%d] ", A[i].salary);
+	}
+	printf("\n");
 }
